@@ -1,5 +1,6 @@
 package com.group.makity.leMakity.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,6 @@ public class AppCategory {
     private Long idCategory;
     private String categoryName;
     @OneToMany(targetEntity = Product.class, mappedBy = "category")
+    @JsonManagedReference
     private List<Product> products = new ArrayList<>();
 }
