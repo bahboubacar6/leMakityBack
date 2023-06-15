@@ -16,6 +16,5 @@ public class ProductDTO {
     private String description;
     private String image;
     private Double stockQuantity;
-    //private AppCategory category;
     private Long idCategory;
 }
