@@ -1,5 +1,6 @@
 package com.group.makity.leMakity.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +23,11 @@ public class AppUser {
     private String firstName;
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "rePassword", nullable = false)
+    private String resetPasswordToken;
     private String telephone;
     private String address;
     @ManyToMany(fetch = FetchType.EAGER)
