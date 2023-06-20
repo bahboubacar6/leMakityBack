@@ -18,6 +18,7 @@ public class AppUserDTO {
     private String firstName;
     private String email;
     private String password;
+    private String resetPasswordToken;
     private String telephone;
     private String address;
     private List<AppRoleDTO> roles;

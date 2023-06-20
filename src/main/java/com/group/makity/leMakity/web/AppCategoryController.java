@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/category")
+@CrossOrigin(origins = "*")
 public class AppCategoryController {
 
     private AppCategoryService appCategoryService;
