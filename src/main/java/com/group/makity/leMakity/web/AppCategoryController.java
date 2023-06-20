@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/category")
+@CrossOrigin(origins = "*")
 public class AppCategoryController {
 
     private AppCategoryService appCategoryService;
@@ -17,9 +18,9 @@ public class AppCategoryController {
         this.appCategoryService = appCategoryService;
     }
 
-    @GetMapping("/all")
-    public List<AppCategoryDTO> listCategory(){
-        return appCategoryService.listCat();
+    @GetMapping("/search")
+    public List<AppCategoryDTO> searchCategory(@RequestParam(name = "keyword", defaultValue = "") String keyword){
+        return appCategoryService.searchCategory("%" + keyword + "%");
     }
 
     @GetMapping("/{id}")

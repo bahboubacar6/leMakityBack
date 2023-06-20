@@ -7,11 +7,12 @@ import lombok.Setter;
 
 import java.util.List;
 
-
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class AppCategoryDTO {
+public class UserHistoryDTO {
 
-    private Long idCategory;
-    private String categoryName;
+    private int currentPage;
+    private int totalPages;
+    private int pageSize;
+    private List<AppUserDTO> userDTOS;
 }

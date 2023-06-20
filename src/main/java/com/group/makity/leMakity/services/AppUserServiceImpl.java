@@ -1,12 +1,15 @@
 package com.group.makity.leMakity.services;
 
 import com.group.makity.leMakity.dtos.AppUserDTO;
+import com.group.makity.leMakity.dtos.UserHistoryDTO;
 import com.group.makity.leMakity.entities.AppRole;
 import com.group.makity.leMakity.entities.AppUser;
 import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.mappers.AppUserMapper;
 import com.group.makity.leMakity.repositories.AppRoleRepository;
 import com.group.makity.leMakity.repositories.AppUserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -102,5 +105,17 @@ public class AppUserServiceImpl implements AppUserService{
         Optional<AppUser> user = appUserRepository.findByEmail(email);
         AppRole role = appRoleRepository.findByRoleName(roleName);
         user.get().getRoles().add(role);
+    }
+
+    @Override
+    public UserHistoryDTO listPageUser(String keyword, int page, int size) {
+        Page<AppUser> userPage = appUserRepository.searchUser(keyword, PageRequest.of(page, size));
+        UserHistoryDTO userHistoryDTO = new UserHistoryDTO();
+        List<AppUserDTO> appUserDTOS = userPage.getContent().stream().map(util -> appUserMapper.toDto(util)).collect(Collectors.toList());
+        userHistoryDTO.setUserDTOS(appUserDTOS);
+        userHistoryDTO.setCurrentPage(page);
+        userHistoryDTO.setPageSize(size);
+        userHistoryDTO.setTotalPages(userPage.getTotalPages());
+        return userHistoryDTO;
     }
 }

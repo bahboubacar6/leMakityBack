@@ -15,5 +15,5 @@ public interface AppCategoryService {
 
     AppCategoryDTO updateCat(AppCategoryDTO appCategoryDTO) throws CategoryNotFoundException;
 
-    List<AppCategoryDTO> listCat();
+    List<AppCategoryDTO> searchCategory(String keyword);
 }
