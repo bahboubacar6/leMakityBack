@@ -2,7 +2,7 @@ spring:
   datasource:
     username: root
     url: jdbc:mysql://localhost:3306/lemakity?serverTimezone=UTC
-    password:
+    password: root
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true

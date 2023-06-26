@@ -54,11 +54,23 @@ public class AccountServiceImpl implements AccountService {
         if(appUser == null){
             throw new AppUserNotFoundException("L'utilisateur n'est pas connecté");
         }
+        if(!Objects.equals(appUser.getLastName(), appUserDTO.getLastName())){
+            appUser.setLastName(appUserDTO.getLastName());
+        }
+        if(!Objects.equals(appUser.getFirstName(), appUserDTO.getFirstName())){
+            appUser.setFirstName(appUserDTO.getFirstName());
+        }
         if(!Objects.equals(appUser.getEmail(),appUserDTO.getEmail())){
             appUser.setEmail(appUserDTO.getEmail());
         }
         if(!Objects.equals(appUser.getPassword(),appUserDTO.getPassword())){
             appUser.setPassword(appUserDTO.getPassword());
+        }
+        if(!Objects.equals(appUser.getTelephone(), appUserDTO.getTelephone())){
+            appUser.setTelephone(appUserDTO.getTelephone());
+        }
+        if(!Objects.equals(appUser.getAddress(), appUserDTO.getAddress())){
+            appUser.setAddress(appUserDTO.getAddress());
         }
         AppUser userSaved = appUserRepository.save(appUser);
         AppUserDTO userDTOSaved = appUserMapper.toDto(userSaved);

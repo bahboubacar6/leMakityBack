@@ -41,22 +41,6 @@ public class AppUserServiceImpl implements AppUserService{
     }
 
     @Override
-    public AppUserDTO saveAppUser(AppUserDTO appUserDTO) {
-
-        appUserRepository.findByEmail(appUserDTO.getEmail()).ifPresent(
-                (present) -> {
-                    throw new RuntimeException("L'utilisateur existe déjà");
-                });
-        AppUser appUser = appUserMapper.toEntity(appUserDTO);
-        //TO DO Encodage du password
-        AppRole role = appRoleRepository.findByRoleName("USER");
-        appUser.setRoles(List.of(role));
-        AppUser appUserSaved = appUserRepository.save(appUser);
-        AppUserDTO appUserDTOSaved = appUserMapper.toDto(appUserSaved);
-        return appUserDTOSaved;
-    }
-
-    @Override
     public boolean deleteUserById(Long idUser) {
         appUserRepository.deleteById(idUser);
         return true;
@@ -67,24 +51,6 @@ public class AppUserServiceImpl implements AppUserService{
         AppUser appUser = appUserRepository.findByEmail(email).orElseThrow(() -> new AppUserNotFoundException(USER_NOT_FOUND));
         AppUserDTO appUserDTO = appUserMapper.toDto(appUser);
         return appUserDTO;
-    }
-
-    @Override
-    public AppUserDTO updateUser(AppUserDTO appUserDTO) throws AppUserNotFoundException {
-        AppUser appUser = appUserRepository.findById(appUserDTO.getIdUser()).get();
-
-        if(appUser == null){
-            throw new AppUserNotFoundException("L'utilisateur n'est pas connecté");
-        }
-        if(!Objects.equals(appUser.getEmail(),appUserDTO.getEmail())){
-            appUser.setEmail(appUserDTO.getEmail());
-        }
-        if(!Objects.equals(appUser.getPassword(),appUserDTO.getPassword())){
-            appUser.setPassword(appUserDTO.getPassword());
-        }
-        AppUser userSaved = appUserRepository.save(appUser);
-        AppUserDTO userDTOSaved = appUserMapper.toDto(userSaved);
-        return userDTOSaved;
     }
 
     @Override

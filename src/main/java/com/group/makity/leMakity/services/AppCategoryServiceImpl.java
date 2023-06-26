@@ -36,7 +36,7 @@ public class AppCategoryServiceImpl implements AppCategoryService {
 
     @Override
     public AppCategoryDTO saveCat(AppCategoryDTO appCategoryDTO) {
-        appCategoryRepository.findById(appCategoryDTO.getIdCategory()).ifPresent(
+        appCategoryRepository.findByCategoryName(appCategoryDTO.getCategoryName()).ifPresent(
                 (present) -> {
                     throw new RuntimeException("La categorie existe déjà");
                 }
