@@ -1,9 +1,9 @@
 package com.group.makity.leMakity.web;
 
 import com.group.makity.leMakity.dtos.AppUserDTO;
-import com.group.makity.leMakity.dtos.ProductHistoryDTO;
 import com.group.makity.leMakity.dtos.UserHistoryDTO;
 import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
+import com.group.makity.leMakity.security.service.AccountService;
 import com.group.makity.leMakity.services.AppUserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +15,11 @@ import java.util.List;
 public class AppUserController {
 
     private AppUserService appUserService;
+    private AccountService accountService;
 
-    public AppUserController(AppUserService appUserService) {
+    public AppUserController(AppUserService appUserService, AccountService accountService) {
         this.appUserService = appUserService;
+        this.accountService = accountService;
     }
 
     @GetMapping("/all")
@@ -28,7 +30,7 @@ public class AppUserController {
     @GetMapping("/pageUser")
     public UserHistoryDTO listProductPage(@RequestParam(name = "keyword", defaultValue = "") String keyword,
                                                      @RequestParam(name = "page", defaultValue = "0") int page,
-                                                     @RequestParam(name = "size", defaultValue = "1") int size){
+                                                     @RequestParam(name = "size", defaultValue = "3") int size){
         return appUserService.listPageUser("%" + keyword + "%",page, size);
     }
 
@@ -37,15 +39,10 @@ public class AppUserController {
         return appUserService.findById(idUser);
     }
 
-    @PostMapping("/save")
-    public AppUserDTO saveUser(@RequestBody AppUserDTO appUserDTO){
-        return appUserService.saveAppUser(appUserDTO);
-    }
-
     @PutMapping("/update/{id}")
     public AppUserDTO updateUser(@PathVariable(name = "id") Long idUser, @RequestBody AppUserDTO appUserDTO) throws AppUserNotFoundException {
         appUserDTO.setIdUser(idUser);
-        return appUserService.updateUser(appUserDTO);
+        return accountService.updateUser(appUserDTO);
     }
 
     @DeleteMapping("/{idUser}")

@@ -11,13 +11,9 @@ public interface AppUserService {
 
     AppUserDTO findById(Long idUser) throws AppUserNotFoundException;
 
-    AppUserDTO saveAppUser(AppUserDTO appUserDTO);
-
     boolean deleteUserById(Long idUser);
 
     AppUserDTO findByEmail(String email) throws AppUserNotFoundException;
-
-    AppUserDTO updateUser(AppUserDTO appUserDTO) throws AppUserNotFoundException;
 
     List<AppUserDTO> listUsers();
 

@@ -95,10 +95,4 @@ public class AuthController {
         }
 
     }
-
-    @GetMapping("/users")
-    public List<AppUserDTO> listUsers(){
-        return accountService.listUsers();
-    }
-
 }
