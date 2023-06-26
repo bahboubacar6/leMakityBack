@@ -14,5 +14,4 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     @Query("select u from AppUser u where u.lastName like :kw")
     Page<AppUser> searchUser(@Param("kw") String keyword, Pageable pageable);
-
 }
