@@ -23,6 +23,11 @@ public class AppCategoryController {
         return appCategoryService.searchCategory("%" + keyword + "%");
     }
 
+    @GetMapping("/all")
+    public List<AppCategoryDTO> getAllCategory(){
+        return appCategoryService.getAllCategory();
+    }
+
     @GetMapping("/{id}")
     public AppCategoryDTO getCategory(@PathVariable(name = "id") Long idCat) throws CategoryNotFoundException {
          return appCategoryService.findById(idCat);

@@ -1,10 +1,11 @@
 package com.group.makity.leMakity.dtos;
 
-import com.group.makity.leMakity.entities.AppCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -16,5 +17,6 @@ public class ProductDTO {
     private String description;
     private String image;
     private Double stockQuantity;
+    private Set<ImageModelDTO> productImages;
     private Long idCategory;
 }

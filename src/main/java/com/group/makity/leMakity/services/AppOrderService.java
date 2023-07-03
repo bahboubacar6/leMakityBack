@@ -1,9 +1,11 @@
 package com.group.makity.leMakity.services;
 
 import com.group.makity.leMakity.dtos.AppOrderDTO;
+import com.group.makity.leMakity.dtos.OrderHistoryDTO;
 import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.exceptions.OrderNotFoundException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface AppOrderService {
@@ -13,4 +15,5 @@ public interface AppOrderService {
     AppOrderDTO updateOrder(AppOrderDTO appOrderDTO) throws OrderNotFoundException;
     List<AppOrderDTO> listOrders();
     boolean deleteOrderById(Long idOrder);
+    OrderHistoryDTO listPageOrder(int page, int size);
 }

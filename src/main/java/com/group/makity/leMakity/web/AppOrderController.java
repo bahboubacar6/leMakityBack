@@ -1,11 +1,14 @@
 package com.group.makity.leMakity.web;
 
 import com.group.makity.leMakity.dtos.AppOrderDTO;
+import com.group.makity.leMakity.dtos.OrderHistoryDTO;
+import com.group.makity.leMakity.dtos.UserHistoryDTO;
 import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.exceptions.OrderNotFoundException;
 import com.group.makity.leMakity.services.AppOrderService;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -22,6 +25,12 @@ public class AppOrderController {
     @GetMapping("/all")
     public List<AppOrderDTO> listOrders(){
         return appOrderService.listOrders();
+    }
+
+    @GetMapping("/pageOrder")
+    public OrderHistoryDTO listOrderPage(@RequestParam(name = "page", defaultValue = "0") int page,
+                                         @RequestParam(name = "size", defaultValue = "3") int size){
+        return appOrderService.listPageOrder(page, size);
     }
 
     @GetMapping("/{idOrder}")

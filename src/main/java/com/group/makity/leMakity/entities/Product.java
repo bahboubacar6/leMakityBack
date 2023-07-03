@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
@@ -22,6 +23,16 @@ public class Product {
     private String description;
     private String image;
     private Double stockQuantity;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "product_images",
+            joinColumns = {
+                    @JoinColumn(name = "id_product")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "id_image")
+            }
+    )
+    private Set<ImageModel> productImages;
     @ManyToOne
     @JoinColumn(name = "id_category", nullable = false)
     @JsonBackReference

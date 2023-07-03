@@ -73,4 +73,11 @@ public class AppCategoryServiceImpl implements AppCategoryService {
         List<AppCategoryDTO> categoryDTOList = categoryList.stream().map(cat -> appCategoryMapper.toDto(cat)).collect(Collectors.toList());
         return categoryDTOList;
     }
+
+    @Override
+    public List<AppCategoryDTO> getAllCategory() {
+        List<AppCategory> categoryList = appCategoryRepository.findAll();
+        List<AppCategoryDTO> categoryDTOList = categoryList.stream().map(cat -> appCategoryMapper.toDto(cat)).collect(Collectors.toList());
+        return categoryDTOList;
+    }
 }
