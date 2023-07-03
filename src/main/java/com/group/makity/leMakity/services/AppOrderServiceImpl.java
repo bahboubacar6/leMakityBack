@@ -1,12 +1,17 @@
 package com.group.makity.leMakity.services;
 
 import com.group.makity.leMakity.dtos.AppOrderDTO;
+import com.group.makity.leMakity.dtos.OrderHistoryDTO;
 import com.group.makity.leMakity.entities.AppOrder;
+import com.group.makity.leMakity.entities.AppUser;
 import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.exceptions.OrderNotFoundException;
 import com.group.makity.leMakity.mappers.AppOrderMapImpl;
 import com.group.makity.leMakity.mappers.AppOrderMapper;
 import com.group.makity.leMakity.repositories.AppOrderRepository;
+import com.group.makity.leMakity.repositories.AppUserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +25,13 @@ public class AppOrderServiceImpl implements AppOrderService {
     private AppOrderRepository appOrderRepository;
     private AppOrderMapper appOrderMapper;
     private AppOrderMapImpl appOrderMap;
+    private AppUserRepository appUserRepository;
 
-    public AppOrderServiceImpl(AppOrderRepository appOrderRepository, AppOrderMapper appOrderMapper, AppOrderMapImpl appOrderMap) {
+    public AppOrderServiceImpl(AppOrderRepository appOrderRepository, AppOrderMapper appOrderMapper, AppOrderMapImpl appOrderMap, AppUserRepository appUserRepository) {
         this.appOrderRepository = appOrderRepository;
         this.appOrderMapper = appOrderMapper;
         this.appOrderMap = appOrderMap;
+        this.appUserRepository = appUserRepository;
     }
 
     @Override
@@ -45,6 +52,8 @@ public class AppOrderServiceImpl implements AppOrderService {
     @Override
     public AppOrderDTO saveOrder(AppOrderDTO appOrderDTO) throws AppUserNotFoundException {
         AppOrder appOrder = appOrderMap.toEntity(appOrderDTO);
+        AppUser appUser = appUserRepository.findById(appOrderDTO.getIdUser()).orElseThrow(() -> new AppUserNotFoundException("USER NOT FOUND"));
+        appOrder.setAppUser(appUser);
         AppOrder appOrderSaved = appOrderRepository.save(appOrder);
         AppOrderDTO appOrderDTOSaved = appOrderMap.toDto(appOrderSaved);
         return appOrderDTOSaved;
@@ -76,5 +85,17 @@ public class AppOrderServiceImpl implements AppOrderService {
     public boolean deleteOrderById(Long idOrder) {
         appOrderRepository.deleteById(idOrder);
         return true;
+    }
+    @Override
+    public OrderHistoryDTO listPageOrder(int page, int size) {
+        Page<AppOrder> orderPage = appOrderRepository.findAll(PageRequest.of(page, size));
+        OrderHistoryDTO orderHistoryDTO = new OrderHistoryDTO();
+        List<AppOrderDTO> appOrderDTOS = orderPage.stream().map(ord -> appOrderMapper.toDto(ord)).collect(Collectors.toList());
+
+        orderHistoryDTO.setOrderDTOS(appOrderDTOS);
+        orderHistoryDTO.setCurrentPage(page);
+        orderHistoryDTO.setPageSize(size);
+        orderHistoryDTO.setTotalPages(orderPage.getTotalPages());
+        return orderHistoryDTO;
     }
 }

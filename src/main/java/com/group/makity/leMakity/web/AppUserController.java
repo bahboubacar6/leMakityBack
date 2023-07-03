@@ -28,7 +28,7 @@ public class AppUserController {
     }
 
     @GetMapping("/pageUser")
-    public UserHistoryDTO listProductPage(@RequestParam(name = "keyword", defaultValue = "") String keyword,
+    public UserHistoryDTO listUserPage(@RequestParam(name = "keyword", defaultValue = "") String keyword,
                                                      @RequestParam(name = "page", defaultValue = "0") int page,
                                                      @RequestParam(name = "size", defaultValue = "3") int size){
         return appUserService.listPageUser("%" + keyword + "%",page, size);
