@@ -2,14 +2,14 @@ package com.group.makity.leMakity.services;
 
 import com.group.makity.leMakity.dtos.AppOrderDTO;
 import com.group.makity.leMakity.dtos.OrderHistoryDTO;
-import com.group.makity.leMakity.entities.AppOrder;
-import com.group.makity.leMakity.entities.AppUser;
+import com.group.makity.leMakity.entities.*;
 import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.exceptions.OrderNotFoundException;
 import com.group.makity.leMakity.mappers.AppOrderMapImpl;
 import com.group.makity.leMakity.mappers.AppOrderMapper;
 import com.group.makity.leMakity.repositories.AppOrderRepository;
 import com.group.makity.leMakity.repositories.AppUserRepository;
+import com.group.makity.leMakity.repositories.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -26,12 +26,14 @@ public class AppOrderServiceImpl implements AppOrderService {
     private AppOrderMapper appOrderMapper;
     private AppOrderMapImpl appOrderMap;
     private AppUserRepository appUserRepository;
+    private ProductRepository productRepository;
 
-    public AppOrderServiceImpl(AppOrderRepository appOrderRepository, AppOrderMapper appOrderMapper, AppOrderMapImpl appOrderMap, AppUserRepository appUserRepository) {
+    public AppOrderServiceImpl(AppOrderRepository appOrderRepository, AppOrderMapper appOrderMapper, AppOrderMapImpl appOrderMap, AppUserRepository appUserRepository, ProductRepository productRepository) {
         this.appOrderRepository = appOrderRepository;
         this.appOrderMapper = appOrderMapper;
         this.appOrderMap = appOrderMap;
         this.appUserRepository = appUserRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -40,14 +42,6 @@ public class AppOrderServiceImpl implements AppOrderService {
         AppOrderDTO appOrderDTO = appOrderMapper.toDto(appOrder);
         return appOrderDTO;
     }
-
-    /*@Override
-    public AppOrderDTO saveOrder(AppOrderDTO appOrderDTO) {
-        AppOrder appOrder = appOrderMapper.toEntity(appOrderDTO);
-        AppOrder appOrderSaved = appOrderRepository.save(appOrder);
-        AppOrderDTO appOrderDTOSaved = appOrderMapper.toDto(appOrderSaved);
-        return appOrderDTOSaved;
-    }*/
 
     @Override
     public AppOrderDTO saveOrder(AppOrderDTO appOrderDTO) throws AppUserNotFoundException {

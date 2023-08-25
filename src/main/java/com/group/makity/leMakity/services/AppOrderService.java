@@ -5,7 +5,6 @@ import com.group.makity.leMakity.dtos.OrderHistoryDTO;
 import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.exceptions.OrderNotFoundException;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface AppOrderService {

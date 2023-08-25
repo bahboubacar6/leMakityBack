@@ -109,4 +109,10 @@ public class AccountServiceImpl implements AccountService {
         return appUserMapper.toDto(appUser);
     }
 
+    @Override
+    public AppUserDTO findById(Long idUser) throws AppUserNotFoundException {
+        AppUser appUser = appUserRepository.findById(idUser).orElseThrow(() -> new AppUserNotFoundException("User not found"));
+        AppUserDTO appUserDTO = appUserMapper.toDto(appUser);
+        return appUserDTO;
+    }
 }
