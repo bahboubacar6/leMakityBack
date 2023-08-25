@@ -1,9 +1,10 @@
-package com.bouali.gestiondestock.validator;
+package com.group.makity.leMakity.validator;
 
-import com.bouali.gestiondestock.dto.CommandeClientDto;
+import com.group.makity.leMakity.dtos.CommandeClientDto;
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.util.StringUtils;
 
 public class CommandeClientValidator {
 
@@ -27,7 +28,7 @@ public class CommandeClientValidator {
     if (!StringUtils.hasLength(dto.getEtatCommande().toString())) {
       errors.add("Veuillez renseigner l'etat de la commande");
     }
-    if (dto.getClient() == null || dto.getClient().getId() == null) {
+    if (dto.getClient() == null || dto.getClient().getIdUser() == null) {
       errors.add("Veuillez renseigner le client");
     }
 

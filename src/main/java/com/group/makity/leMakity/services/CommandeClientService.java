@@ -1,34 +1,38 @@
-package com.bouali.gestiondestock.services;
+package com.group.makity.leMakity.services;
 
-import com.bouali.gestiondestock.dto.CommandeClientDto;
-import com.bouali.gestiondestock.dto.LigneCommandeClientDto;
-import com.bouali.gestiondestock.model.EtatCommande;
+import com.group.makity.leMakity.dtos.CommandeClientDto;
+import com.group.makity.leMakity.dtos.LigneCommandeClientDto;
+import com.group.makity.leMakity.entities.EtatCommande;
+import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
+import com.group.makity.leMakity.exceptions.InvalidCmdClientException;
+import com.group.makity.leMakity.exceptions.InvalidOperationException;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface CommandeClientService {
 
-  CommandeClientDto save(CommandeClientDto dto);
+  CommandeClientDto save(CommandeClientDto dto) throws InvalidCmdClientException, InvalidOperationException, AppUserNotFoundException;
 
-  CommandeClientDto updateEtatCommande(Integer idCommande, EtatCommande etatCommande);
+  CommandeClientDto updateEtatCommande(Long idCommande, EtatCommande etatCommande) throws InvalidOperationException, InvalidCmdClientException;
 
-  CommandeClientDto updateQuantiteCommande(Integer idCommande, Integer idLigneCommande, BigDecimal quantite);
+  CommandeClientDto updateQuantiteCommande(Long idCommande, Long idLigneCommande, BigDecimal quantite) throws InvalidCmdClientException, InvalidOperationException;
 
-  CommandeClientDto updateClient(Integer idCommande, Integer idClient);
+  CommandeClientDto updateClient(Long idCommande, Long idClient) throws InvalidCmdClientException, InvalidOperationException;
 
-  CommandeClientDto updateArticle(Integer idCommande, Integer idLigneCommande, Integer newIdArticle);
+  CommandeClientDto updateArticle(Long idCommande, Long idLigneCommande, Long newIdArticle) throws InvalidOperationException, InvalidCmdClientException;
 
   // Delete article ==> delete LigneCommandeClient
-  CommandeClientDto deleteArticle(Integer idCommande, Integer idLigneCommande);
+  CommandeClientDto deleteArticle(Long idCommande, Long idLigneCommande) throws InvalidOperationException, InvalidCmdClientException;
 
-  CommandeClientDto findById(Integer id);
+  CommandeClientDto findById(Long id) throws InvalidCmdClientException;
 
-  CommandeClientDto findByCode(String code);
+  CommandeClientDto findByCode(String code) throws InvalidCmdClientException;
 
   List<CommandeClientDto> findAll();
 
-  List<LigneCommandeClientDto> findAllLignesCommandesClientByCommandeClientId(Integer idCommande);
+  List<LigneCommandeClientDto> findAllLignesCommandesClientByCommandeClientId(Long idCommande);
 
-  void delete(Integer id);
+  void delete(Long id) throws InvalidOperationException;
 
 }

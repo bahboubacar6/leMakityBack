@@ -1,13 +1,14 @@
-package com.bouali.gestiondestock.repository;
+package com.group.makity.leMakity.repositories;
 
-import com.bouali.gestiondestock.model.LigneCommandeClient;
-import java.util.List;
+import com.group.makity.leMakity.entities.LigneCommandeClient;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LigneCommandeClientRepository extends JpaRepository<LigneCommandeClient, Integer> {
+import java.util.List;
+
+public interface LigneCommandeClientRepository extends JpaRepository<LigneCommandeClient, Long> {
 
 
-  List<LigneCommandeClient> findAllByCommandeClientId(Integer id);
+  List<LigneCommandeClient> findAllByCommandeClientId(Long id);
 
-  List<LigneCommandeClient> findAllByArticleId(Integer id);
+  List<LigneCommandeClient> findAllByProductIdProduct(Long id);
 }

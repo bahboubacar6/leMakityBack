@@ -1,42 +1,27 @@
-package com.bouali.gestiondestock.validator;
+package com.group.makity.leMakity.validator;
 
-import com.bouali.gestiondestock.dto.ArticleDto;
-import java.util.ArrayList;
-import java.util.List;
+import com.group.makity.leMakity.dtos.ProductDTO;
 import org.springframework.util.StringUtils;
 
-public class ArticleValidator {
+import java.util.ArrayList;
+import java.util.List;
 
-  public static List<String> validate(ArticleDto dto) {
+public class ProductValidator {
+
+  public static List<String> validate(ProductDTO dto) {
     List<String> errors = new ArrayList<>();
 
     if (dto == null) {
-      errors.add("Veuillez renseigner le code de l'article");
-      errors.add("Veuillez renseigner la designation de l'article");
-      errors.add("Veuillez renseigner le prix unitaire HT l'article");
-      errors.add("Veuillez renseigner le taux TVA de l'article");
-      errors.add("Veuillez renseigner le prix unitaire TTC de l'article");
-      errors.add("Veuillez selectionner une categorie");
+      errors.add("Veuillez renseigner le nom du produit");
+      errors.add("Veuillez renseigner le prix du produit");
       return errors;
     }
 
-    if (!StringUtils.hasLength(dto.getCodeArticle())) {
-      errors.add("Veuillez renseigner le code de l'article");
+    if (!StringUtils.hasLength(dto.getProductName())) {
+      errors.add("Veuillez renseigner le nom du produit");
     }
-    if (!StringUtils.hasLength(dto.getDesignation())) {
-      errors.add("Veuillez renseigner la designation de l'article");
-    }
-    if (dto.getPrixUnitaireHt() == null) {
-      errors.add("Veuillez renseigner le prix unitaire HT l'article");
-    }
-    if (dto.getTauxTva() == null) {
-      errors.add("Veuillez renseigner le taux TVA de l'article");
-    }
-    if (dto.getPrixUnitaireTtc() == null) {
-      errors.add("Veuillez renseigner le prix unitaire TTC de l'article");
-    }
-    if (dto.getCategory() == null || dto.getCategory().getId() == null) {
-      errors.add("Veuillez selectionner une categorie");
+    if (dto.getPrice() == null) {
+      errors.add("Veuillez renseigner le prix du produit");
     }
     return errors;
   }

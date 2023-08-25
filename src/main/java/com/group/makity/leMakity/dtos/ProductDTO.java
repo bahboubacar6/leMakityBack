@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -17,6 +16,5 @@ public class ProductDTO {
     private String description;
     private String image;
     private Double stockQuantity;
-    private Set<ImageModelDTO> productImages;
     private Long idCategory;
 }

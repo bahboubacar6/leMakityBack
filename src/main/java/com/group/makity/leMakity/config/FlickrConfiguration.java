@@ -1,4 +1,4 @@
-package com.leMakiti.group.leMakiti.config;
+package com.group.makity.leMakity.config;
 
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
@@ -33,6 +33,7 @@ public class FlickrConfiguration {
 
     @Value("${flickr.appSecret}")
     private String appSecret;
+
 
     /*@Bean
     public Flickr getFlickr() throws IOException, ExecutionException, InterruptedException, FlickrException {

@@ -10,3 +10,9 @@ spring:
       ddl-auto: update
 server:
   port: 8082
+
+flickr:
+  apiKey: 9af611f9e79f45f9c04d04a541aaf5ad
+  apiSecret: 32199c3b92023764
+  appKey: 72157720890223620-b80388f451832682
+  appSecret: cbb4ce89684ac14d

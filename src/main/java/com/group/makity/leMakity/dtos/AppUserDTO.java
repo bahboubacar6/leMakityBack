@@ -12,11 +12,11 @@ import java.util.List;
 @NoArgsConstructor @AllArgsConstructor
 public class AppUserDTO {
 
-
     private Long idUser;
     private String lastName;
     private String firstName;
     private String email;
+    private String image;
     private String password;
     private String resetPasswordToken;
     private String telephone;

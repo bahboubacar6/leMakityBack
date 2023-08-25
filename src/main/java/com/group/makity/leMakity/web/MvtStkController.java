@@ -1,12 +1,15 @@
-package com.bouali.gestiondestock.controller;
+package com.group.makity.leMakity.web;
 
-import com.bouali.gestiondestock.controller.api.MvtStkApi;
-import com.bouali.gestiondestock.dto.MvtStkDto;
-import com.bouali.gestiondestock.services.MvtStkService;
-import java.math.BigDecimal;
-import java.util.List;
+import com.group.makity.leMakity.dtos.MvtStkDto;
+import com.group.makity.leMakity.exceptions.InvalidMvtStkException;
+import com.group.makity.leMakity.exceptions.ProductNotFoundException;
+import com.group.makity.leMakity.services.MvtStkService;
+import com.group.makity.leMakity.web.api.MvtStkApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 public class MvtStkController implements MvtStkApi {
@@ -19,32 +22,32 @@ public class MvtStkController implements MvtStkApi {
   }
 
   @Override
-  public BigDecimal stockReelArticle(Integer idArticle) {
-    return service.stockReelArticle(idArticle);
+  public BigDecimal stockReelArticle(Long idArticle) throws ProductNotFoundException {
+    return service.stockReelProduit(idArticle);
   }
 
   @Override
-  public List<MvtStkDto> mvtStkArticle(Integer idArticle) {
-    return service.mvtStkArticle(idArticle);
+  public List<MvtStkDto> mvtStkArticle(Long idArticle) {
+    return service.mvtStkProduit(idArticle);
   }
 
   @Override
-  public MvtStkDto entreeStock(MvtStkDto dto) {
+  public MvtStkDto entreeStock(MvtStkDto dto) throws InvalidMvtStkException {
     return service.entreeStock(dto);
   }
 
   @Override
-  public MvtStkDto sortieStock(MvtStkDto dto) {
+  public MvtStkDto sortieStock(MvtStkDto dto) throws InvalidMvtStkException {
     return service.sortieStock(dto);
   }
 
   @Override
-  public MvtStkDto correctionStockPos(MvtStkDto dto) {
+  public MvtStkDto correctionStockPos(MvtStkDto dto) throws InvalidMvtStkException {
     return service.correctionStockPos(dto);
   }
 
   @Override
-  public MvtStkDto correctionStockNeg(MvtStkDto dto) {
+  public MvtStkDto correctionStockNeg(MvtStkDto dto) throws InvalidMvtStkException {
     return service.correctionStockNeg(dto);
   }
 }

@@ -1,26 +1,21 @@
-package com.bouali.gestiondestock.model;
+package com.group.makity.leMakity.entities;
 
+import lombok.*;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+
 @Entity
-@Table(name = "mvtstk")
-public class MvtStk extends AbstractEntity {
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+public class MvtStk {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id_mvtStk")
+  private Long idMvtStk;
 
   @Column(name = "datemvt")
   private Instant dateMvt;
@@ -29,17 +24,10 @@ public class MvtStk extends AbstractEntity {
   private BigDecimal quantite;
 
   @ManyToOne
-  @JoinColumn(name = "idarticle")
-  private Article article;
+  @JoinColumn(name = "id_product")
+  private Product product;
 
   @Column(name = "typemvt")
   @Enumerated(EnumType.STRING)
   private TypeMvtStk typeMvt;
-
-  @Column(name = "sourcemvt")
-  @Enumerated(EnumType.STRING)
-  private SourceMvtStk sourceMvt;
-
-  @Column(name = "identreprise")
-  private Integer idEntreprise;
 }

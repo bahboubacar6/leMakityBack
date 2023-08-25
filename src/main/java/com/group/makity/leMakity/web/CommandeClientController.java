@@ -1,15 +1,19 @@
-package com.bouali.gestiondestock.controller;
+package com.group.makity.leMakity.web;
 
-import com.bouali.gestiondestock.controller.api.CommandeClientApi;
-import com.bouali.gestiondestock.dto.CommandeClientDto;
-import com.bouali.gestiondestock.dto.LigneCommandeClientDto;
-import com.bouali.gestiondestock.model.EtatCommande;
-import com.bouali.gestiondestock.services.CommandeClientService;
-import java.math.BigDecimal;
-import java.util.List;
+import com.group.makity.leMakity.dtos.CommandeClientDto;
+import com.group.makity.leMakity.dtos.LigneCommandeClientDto;
+import com.group.makity.leMakity.entities.EtatCommande;
+import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
+import com.group.makity.leMakity.exceptions.InvalidCmdClientException;
+import com.group.makity.leMakity.exceptions.InvalidOperationException;
+import com.group.makity.leMakity.services.CommandeClientService;
+import com.group.makity.leMakity.web.api.CommandeClientApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 public class CommandeClientController implements CommandeClientApi {
@@ -22,42 +26,42 @@ public class CommandeClientController implements CommandeClientApi {
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> save(CommandeClientDto dto) {
+  public ResponseEntity<CommandeClientDto> save(CommandeClientDto dto) throws InvalidOperationException, AppUserNotFoundException, InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.save(dto));
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> updateEtatCommande(Integer idCommande, EtatCommande etatCommande) {
+  public ResponseEntity<CommandeClientDto> updateEtatCommande(Long idCommande, EtatCommande etatCommande) throws InvalidOperationException, InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.updateEtatCommande(idCommande, etatCommande));
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> updateQuantiteCommande(Integer idCommande, Integer idLigneCommande, BigDecimal quantite) {
+  public ResponseEntity<CommandeClientDto> updateQuantiteCommande(Long idCommande, Long idLigneCommande, BigDecimal quantite) throws InvalidOperationException, InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.updateQuantiteCommande(idCommande, idLigneCommande, quantite));
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> updateClient(Integer idCommande, Integer idClient) {
+  public ResponseEntity<CommandeClientDto> updateClient(Long idCommande, Long idClient) throws InvalidOperationException, InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.updateClient(idCommande, idClient));
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> updateArticle(Integer idCommande, Integer idLigneCommande, Integer idArticle) {
+  public ResponseEntity<CommandeClientDto> updateArticle(Long idCommande, Long idLigneCommande, Long idArticle) throws InvalidOperationException, InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.updateArticle(idCommande, idLigneCommande, idArticle));
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> deleteArticle(Integer idCommande, Integer idLigneCommande) {
+  public ResponseEntity<CommandeClientDto> deleteArticle(Long idCommande, Long idLigneCommande) throws InvalidOperationException, InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.deleteArticle(idCommande, idLigneCommande));
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> findById(Integer id) {
+  public ResponseEntity<CommandeClientDto> findById(Long id) throws InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.findById(id));
   }
 
   @Override
-  public ResponseEntity<CommandeClientDto> findByCode(String code) {
+  public ResponseEntity<CommandeClientDto> findByCode(String code) throws InvalidCmdClientException {
     return ResponseEntity.ok(commandeClientService.findByCode(code));
   }
 
@@ -67,12 +71,12 @@ public class CommandeClientController implements CommandeClientApi {
   }
 
   @Override
-  public ResponseEntity<List<LigneCommandeClientDto>> findAllLignesCommandesClientByCommandeClientId(Integer idCommande) {
+  public ResponseEntity<List<LigneCommandeClientDto>> findAllLignesCommandesClientByCommandeClientId(Long idCommande) {
     return ResponseEntity.ok(commandeClientService.findAllLignesCommandesClientByCommandeClientId(idCommande));
   }
 
   @Override
-  public ResponseEntity<Void> delete(Integer id) {
+  public ResponseEntity<Void> delete(Long id) throws InvalidOperationException {
     commandeClientService.delete(id);
     return ResponseEntity.ok().build();
   }

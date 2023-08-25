@@ -30,4 +30,11 @@ public class AppOrder {
             joinColumns = @JoinColumn( name = "id_order" ),
             inverseJoinColumns = @JoinColumn( name = "id_product" ) )
     private List<Product> products = new ArrayList<>();
+
+    public AppOrder(BigDecimal amount, LocalDate date, AppUser appUser, List<Product> products) {
+        this.amount = amount;
+        this.date = date;
+        this.appUser = appUser;
+        this.products = products;
+    }
 }

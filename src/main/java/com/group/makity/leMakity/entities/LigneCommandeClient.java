@@ -1,30 +1,27 @@
-package com.bouali.gestiondestock.model;
+package com.group.makity.leMakity.entities;
 
+import lombok.*;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+
 @Entity
-@Table(name = "lignecommandeclient")
-public class LigneCommandeClient extends AbstractEntity {
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+public class LigneCommandeClient {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id_ligneCmdClient")
+  private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "idarticle")
-  private Article article;
+  @JoinColumn(name = "id_product")
+  private Product product;
 
   @ManyToOne
-  @JoinColumn(name = "idcommandeclient")
+  @JoinColumn(name = "id_cmdClient")
   private CommandeClient commandeClient;
 
   @Column(name = "quantite")
@@ -32,8 +29,5 @@ public class LigneCommandeClient extends AbstractEntity {
 
   @Column(name = "prixunitaire")
   private BigDecimal prixUnitaire;
-
-  @Column(name = "identreprise")
-  private Integer idEntreprise;
 
 }

@@ -14,4 +14,5 @@ public interface AccountService {
     AppUserDTO loadUserByEmail(String email) throws AppUserNotFoundException;
     List<AppUserDTO> listUsers();
     AppUserDTO findByEmail(String email) throws AppUserNotFoundException;
+    AppUserDTO findById(Long idUser) throws AppUserNotFoundException;
 }

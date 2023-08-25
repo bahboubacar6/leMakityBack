@@ -1,17 +1,18 @@
-package com.bouali.gestiondestock.repository;
+package com.group.makity.leMakity.repositories;
 
-import com.bouali.gestiondestock.model.MvtStk;
-import java.math.BigDecimal;
-import java.util.List;
+import com.group.makity.leMakity.entities.MvtStk;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MvtStkRepository extends JpaRepository<MvtStk, Integer> {
+import java.math.BigDecimal;
+import java.util.List;
 
-  @Query("select sum(m.quantite) from MvtStk m where m.article.id = :idArticle")
-  BigDecimal stockReelArticle(@Param("idArticle") Integer idArticle);
+public interface MvtStkRepository extends JpaRepository<MvtStk, Long> {
 
-  List<MvtStk> findAllByArticleId(Integer idArticle);
+  @Query("select sum(m.quantite) from MvtStk m where m.product.idProduct = :idProduct")
+  BigDecimal stockReelProduit(@Param("idProduct") Long idProduct);
+
+  List<MvtStk> findAllByProductIdProduct(Long idProduct);
 
 }

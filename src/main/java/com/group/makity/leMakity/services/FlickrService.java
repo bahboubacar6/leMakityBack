@@ -1,4 +1,4 @@
-package com.leMakiti.group.leMakiti.services;
+package com.group.makity.leMakity.services;
 
 import com.flickr4java.flickr.FlickrException;
 

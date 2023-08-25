@@ -19,23 +19,34 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_user")
     private Long idUser;
+
     private String lastName;
+
     private String firstName;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    private String image;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
+
     @Column(name = "rePassword", nullable = false)
     private String resetPasswordToken;
+
     private String telephone;
+
     private String address;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "users_roles_Associations",
             joinColumns = @JoinColumn( name = "id_user" ),
             inverseJoinColumns = @JoinColumn( name = "id_role" ) )
     private List<AppRole> roles = new ArrayList<>();
-    @OneToMany(targetEntity = AppOrder.class, mappedBy = "appUser")
-    private List<AppOrder> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client")
+    private List<CommandeClient> commandeClients;
 
 }

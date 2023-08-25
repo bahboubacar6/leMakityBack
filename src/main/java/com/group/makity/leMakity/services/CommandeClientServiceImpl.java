@@ -1,39 +1,34 @@
-package com.bouali.gestiondestock.services.impl;
+package com.group.makity.leMakity.services;
 
-import com.bouali.gestiondestock.dto.ArticleDto;
-import com.bouali.gestiondestock.dto.ClientDto;
-import com.bouali.gestiondestock.dto.CommandeClientDto;
-import com.bouali.gestiondestock.dto.LigneCommandeClientDto;
-import com.bouali.gestiondestock.dto.MvtStkDto;
-import com.bouali.gestiondestock.exception.EntityNotFoundException;
-import com.bouali.gestiondestock.exception.ErrorCodes;
-import com.bouali.gestiondestock.exception.InvalidEntityException;
-import com.bouali.gestiondestock.exception.InvalidOperationException;
-import com.bouali.gestiondestock.model.Article;
-import com.bouali.gestiondestock.model.Client;
-import com.bouali.gestiondestock.model.CommandeClient;
-import com.bouali.gestiondestock.model.EtatCommande;
-import com.bouali.gestiondestock.model.LigneCommandeClient;
-import com.bouali.gestiondestock.model.SourceMvtStk;
-import com.bouali.gestiondestock.model.TypeMvtStk;
-import com.bouali.gestiondestock.repository.ArticleRepository;
-import com.bouali.gestiondestock.repository.ClientRepository;
-import com.bouali.gestiondestock.repository.CommandeClientRepository;
-import com.bouali.gestiondestock.repository.LigneCommandeClientRepository;
-import com.bouali.gestiondestock.services.CommandeClientService;
-import com.bouali.gestiondestock.services.MvtStkService;
-import com.bouali.gestiondestock.validator.ArticleValidator;
-import com.bouali.gestiondestock.validator.CommandeClientValidator;
+import com.group.makity.leMakity.dtos.CommandeClientDto;
+import com.group.makity.leMakity.dtos.LigneCommandeClientDto;
+import com.group.makity.leMakity.dtos.MvtStkDto;
+import com.group.makity.leMakity.entities.*;
+import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
+import com.group.makity.leMakity.exceptions.InvalidCmdClientException;
+import com.group.makity.leMakity.exceptions.InvalidMvtStkException;
+import com.group.makity.leMakity.exceptions.InvalidOperationException;
+import com.group.makity.leMakity.mappers.AppUserMapper;
+import com.group.makity.leMakity.mappers.CommandeClientMapper;
+import com.group.makity.leMakity.mappers.LigneCommandeClientMapper;
+import com.group.makity.leMakity.mappers.ProductMapper;
+import com.group.makity.leMakity.repositories.AppUserRepository;
+import com.group.makity.leMakity.repositories.CommandeClientRepository;
+import com.group.makity.leMakity.repositories.LigneCommandeClientRepository;
+import com.group.makity.leMakity.repositories.ProductRepository;
+import com.group.makity.leMakity.validator.CommandeClientValidator;
+import com.group.makity.leMakity.validator.ProductValidator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -41,50 +36,57 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
   private CommandeClientRepository commandeClientRepository;
   private LigneCommandeClientRepository ligneCommandeClientRepository;
-  private ClientRepository clientRepository;
-  private ArticleRepository articleRepository;
+  private AppUserRepository clientRepository;
+  private ProductRepository productRepository;
   private MvtStkService mvtStkService;
+  private CommandeClientMapper commandeClientMapper;
+  private LigneCommandeClientMapper ligneCommandeClientMapper;
+  private ProductMapper productMapper;
+  private AppUserMapper appUserMapper;
 
   @Autowired
   public CommandeClientServiceImpl(CommandeClientRepository commandeClientRepository,
-      ClientRepository clientRepository, ArticleRepository articleRepository, LigneCommandeClientRepository ligneCommandeClientRepository,
-      MvtStkService mvtStkService) {
+                                   AppUserRepository clientRepository, ProductRepository productRepository, LigneCommandeClientRepository ligneCommandeClientRepository,
+                                   MvtStkService mvtStkService, CommandeClientMapper commandeClientMapper, LigneCommandeClientMapper ligneCommandeClientMapper, ProductMapper productMapper, AppUserMapper appUserMapper) {
     this.commandeClientRepository = commandeClientRepository;
     this.ligneCommandeClientRepository = ligneCommandeClientRepository;
     this.clientRepository = clientRepository;
-    this.articleRepository = articleRepository;
+    this.productRepository = productRepository;
     this.mvtStkService = mvtStkService;
+    this.commandeClientMapper = commandeClientMapper;
+    this.ligneCommandeClientMapper = ligneCommandeClientMapper;
+    this.productMapper = productMapper;
+    this.appUserMapper = appUserMapper;
   }
 
   @Override
-  public CommandeClientDto save(CommandeClientDto dto) {
+  public CommandeClientDto save(CommandeClientDto dto) throws InvalidCmdClientException, InvalidOperationException, AppUserNotFoundException {
 
     List<String> errors = CommandeClientValidator.validate(dto);
 
     if (!errors.isEmpty()) {
       log.error("Commande client n'est pas valide");
-      throw new InvalidEntityException("La commande client n'est pas valide", ErrorCodes.COMMANDE_CLIENT_NOT_VALID, errors);
+      throw new InvalidCmdClientException("La commande client n'est pas valide");
     }
 
-    if (dto.getId() != null && dto.isCommandeLivree()) {
-      throw new InvalidOperationException("Impossible de modifier la commande lorsqu'elle est livree", ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+    if (dto.getIdCmdClient() != null && dto.isCommandeLivree()) {
+      throw new InvalidOperationException("Impossible de modifier la commande lorsqu'elle est livree");
     }
 
-    Optional<Client> client = clientRepository.findById(dto.getClient().getId());
+    Optional<AppUser> client = clientRepository.findById(dto.getClient().getIdUser());
     if (client.isEmpty()) {
-      log.warn("Client with ID {} was not found in the DB", dto.getClient().getId());
-      throw new EntityNotFoundException("Aucun client avec l'ID" + dto.getClient().getId() + " n'a ete trouve dans la BDD",
-          ErrorCodes.CLIENT_NOT_FOUND);
+      log.warn("Client with ID {} was not found in the DB", dto.getClient().getIdUser());
+      throw new AppUserNotFoundException("Aucun client avec l'ID");
     }
 
     List<String> articleErrors = new ArrayList<>();
 
     if (dto.getLigneCommandeClients() != null) {
       dto.getLigneCommandeClients().forEach(ligCmdClt -> {
-        if (ligCmdClt.getArticle() != null) {
-          Optional<Article> article = articleRepository.findById(ligCmdClt.getArticle().getId());
+        if (ligCmdClt.getProduct() != null) {
+          Optional<Product> article = productRepository.findById(ligCmdClt.getProduct().getIdProduct());
           if (article.isEmpty()) {
-            articleErrors.add("L'article avec l'ID " + ligCmdClt.getArticle().getId() + " n'existe pas");
+            articleErrors.add("L'article avec l'ID " + ligCmdClt.getProduct().getIdProduct() + " n'existe pas");
           }
         } else {
           articleErrors.add("Impossible d'enregister une commande avec un aticle NULL");
@@ -94,107 +96,107 @@ public class CommandeClientServiceImpl implements CommandeClientService {
 
     if (!articleErrors.isEmpty()) {
       log.warn("");
-      throw new InvalidEntityException("Article n'existe pas dans la BDD", ErrorCodes.ARTICLE_NOT_FOUND, articleErrors);
+      throw new InvalidOperationException("Article n'existe pas dans la BDD");
     }
     dto.setDateCommande(Instant.now());
-    CommandeClient savedCmdClt = commandeClientRepository.save(CommandeClientDto.toEntity(dto));
+    CommandeClient savedCmdClt = commandeClientRepository.save(commandeClientMapper.toEntity(dto));
 
     if (dto.getLigneCommandeClients() != null) {
       dto.getLigneCommandeClients().forEach(ligCmdClt -> {
-        LigneCommandeClient ligneCommandeClient = LigneCommandeClientDto.toEntity(ligCmdClt);
+        LigneCommandeClient ligneCommandeClient = ligneCommandeClientMapper.toEntity(ligCmdClt);
         ligneCommandeClient.setCommandeClient(savedCmdClt);
-        ligneCommandeClient.setIdEntreprise(dto.getIdEntreprise());
         LigneCommandeClient savedLigneCmd = ligneCommandeClientRepository.save(ligneCommandeClient);
 
-        effectuerSortie(savedLigneCmd);
+        try {
+          effectuerSortie(savedLigneCmd);
+        } catch (InvalidMvtStkException e) {
+          throw new RuntimeException(e);
+        }
       });
     }
 
-    return CommandeClientDto.fromEntity(savedCmdClt);
+    return commandeClientMapper.toDto(savedCmdClt);
   }
 
   @Override
-  public CommandeClientDto findById(Integer id) {
+  public CommandeClientDto findById(Long id) throws InvalidCmdClientException {
     if (id == null) {
       log.error("Commande client ID is NULL");
       return null;
     }
     return commandeClientRepository.findById(id)
-        .map(CommandeClientDto::fromEntity)
-        .orElseThrow(() -> new EntityNotFoundException(
-            "Aucune commande client n'a ete trouve avec l'ID " + id, ErrorCodes.COMMANDE_CLIENT_NOT_FOUND
+        .map(commandeClientMapper::toDto)
+        .orElseThrow(() -> new InvalidCmdClientException(
+            "Aucune commande client n'a ete trouve avec l'ID "
         ));
   }
 
   @Override
-  public CommandeClientDto findByCode(String code) {
+  public CommandeClientDto findByCode(String code) throws InvalidCmdClientException {
     if (!StringUtils.hasLength(code)) {
       log.error("Commande client CODE is NULL");
       return null;
     }
     return commandeClientRepository.findCommandeClientByCode(code)
-        .map(CommandeClientDto::fromEntity)
-        .orElseThrow(() -> new EntityNotFoundException(
-            "Aucune commande client n'a ete trouve avec le CODE " + code, ErrorCodes.COMMANDE_CLIENT_NOT_FOUND
+        .map(commandeClientMapper::toDto)
+        .orElseThrow(() -> new InvalidCmdClientException(
+            "Aucune commande client n'a ete trouve avec le CODE "
         ));
   }
 
   @Override
   public List<CommandeClientDto> findAll() {
     return commandeClientRepository.findAll().stream()
-        .map(CommandeClientDto::fromEntity)
+        .map(commandeClientMapper::toDto)
         .collect(Collectors.toList());
   }
 
   @Override
-  public void delete(Integer id) {
+  public void delete(Long id) throws InvalidOperationException {
     if (id == null) {
       log.error("Commande client ID is NULL");
       return;
     }
     List<LigneCommandeClient> ligneCommandeClients = ligneCommandeClientRepository.findAllByCommandeClientId(id);
     if (!ligneCommandeClients.isEmpty()) {
-      throw new InvalidOperationException("Impossible de supprimer une commande client deja utilisee",
-          ErrorCodes.COMMANDE_CLIENT_ALREADY_IN_USE);
+      throw new InvalidOperationException("Impossible de supprimer une commande client deja utilisee");
     }
     commandeClientRepository.deleteById(id);
   }
 
   @Override
-  public List<LigneCommandeClientDto> findAllLignesCommandesClientByCommandeClientId(Integer idCommande) {
+  public List<LigneCommandeClientDto> findAllLignesCommandesClientByCommandeClientId(Long idCommande) {
     return ligneCommandeClientRepository.findAllByCommandeClientId(idCommande).stream()
-        .map(LigneCommandeClientDto::fromEntity)
+        .map(ligneCommandeClientMapper::toDto)
         .collect(Collectors.toList());
   }
 
   @Override
-  public CommandeClientDto updateEtatCommande(Integer idCommande, EtatCommande etatCommande) {
+  public CommandeClientDto updateEtatCommande(Long idCommande, EtatCommande etatCommande) throws InvalidOperationException, InvalidCmdClientException {
     checkIdCommande(idCommande);
     if (!StringUtils.hasLength(String.valueOf(etatCommande))) {
       log.error("L'etat de la commande client is NULL");
-      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec un etat null",
-          ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec un etat null");
     }
     CommandeClientDto commandeClient = checkEtatCommande(idCommande);
     commandeClient.setEtatCommande(etatCommande);
 
-    CommandeClient savedCmdClt = commandeClientRepository.save(CommandeClientDto.toEntity(commandeClient));
+    CommandeClient savedCmdClt = commandeClientRepository.save(commandeClientMapper.toEntity(commandeClient));
     if (commandeClient.isCommandeLivree()) {
       updateMvtStk(idCommande);
     }
 
-    return CommandeClientDto.fromEntity(savedCmdClt);
+    return commandeClientMapper.toDto(savedCmdClt);
   }
 
   @Override
-  public CommandeClientDto updateQuantiteCommande(Integer idCommande, Integer idLigneCommande, BigDecimal quantite) {
+  public CommandeClientDto updateQuantiteCommande(Long idCommande, Long idLigneCommande, BigDecimal quantite) throws InvalidCmdClientException, InvalidOperationException {
     checkIdCommande(idCommande);
     checkIdLigneCommande(idLigneCommande);
 
     if (quantite == null || quantite.compareTo(BigDecimal.ZERO) == 0) {
       log.error("L'ID de la ligne commande is NULL");
-      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec une quantite null ou ZERO",
-          ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec une quantite null ou ZERO");
     }
 
     CommandeClientDto commandeClient = checkEtatCommande(idCommande);
@@ -208,56 +210,55 @@ public class CommandeClientServiceImpl implements CommandeClientService {
   }
 
   @Override
-  public CommandeClientDto updateClient(Integer idCommande, Integer idClient) {
+  public CommandeClientDto updateClient(Long idCommande, Long idClient) throws InvalidCmdClientException, InvalidOperationException {
     checkIdCommande(idCommande);
     if (idClient == null) {
       log.error("L'ID du client is NULL");
-      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec un ID client null",
-          ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec un ID client null");
     }
     CommandeClientDto commandeClient = checkEtatCommande(idCommande);
-    Optional<Client> clientOptional = clientRepository.findById(idClient);
+    Optional<AppUser> clientOptional = clientRepository.findById(idClient);
     if (clientOptional.isEmpty()) {
-      throw new EntityNotFoundException(
-          "Aucun client n'a ete trouve avec l'ID " + idClient, ErrorCodes.CLIENT_NOT_FOUND);
+      throw new InvalidOperationException(
+          "Aucun client n'a ete trouve avec l'ID ");
     }
-    commandeClient.setClient(ClientDto.fromEntity(clientOptional.get()));
+    commandeClient.setClient(appUserMapper.toDto(clientOptional.get()));
 
-    return CommandeClientDto.fromEntity(
-        commandeClientRepository.save(CommandeClientDto.toEntity(commandeClient))
+    return commandeClientMapper.toDto(
+        commandeClientRepository.save(commandeClientMapper.toEntity(commandeClient))
     );
   }
 
   @Override
-  public CommandeClientDto updateArticle(Integer idCommande, Integer idLigneCommande, Integer idArticle) {
+  public CommandeClientDto updateArticle(Long idCommande, Long idLigneCommande, Long idProduct) throws InvalidOperationException, InvalidCmdClientException {
     checkIdCommande(idCommande);
     checkIdLigneCommande(idLigneCommande);
-    checkIdArticle(idArticle, "nouvel");
+    checkIdArticle(idProduct, "nouvel");
 
     CommandeClientDto commandeClient = checkEtatCommande(idCommande);
 
     Optional<LigneCommandeClient> ligneCommandeClient = findLigneCommandeClient(idLigneCommande);
 
-    Optional<Article> articleOptional = articleRepository.findById(idArticle);
-    if (articleOptional.isEmpty()) {
-      throw new EntityNotFoundException(
-          "Aucune article n'a ete trouve avec l'ID " + idArticle, ErrorCodes.ARTICLE_NOT_FOUND);
+    Optional<Product> productOptional = productRepository.findById(idProduct);
+    if (productOptional.isEmpty()) {
+      throw new InvalidOperationException(
+          "Aucune article n'a ete trouve avec l'ID ");
     }
 
-    List<String> errors = ArticleValidator.validate(ArticleDto.fromEntity(articleOptional.get()));
+    List<String> errors = ProductValidator.validate(productMapper.toDto(productOptional.get()));
     if (!errors.isEmpty()) {
-      throw new InvalidEntityException("Article invalid", ErrorCodes.ARTICLE_NOT_VALID, errors);
+      throw new InvalidOperationException("Article invalid");
     }
 
     LigneCommandeClient ligneCommandeClientToSaved = ligneCommandeClient.get();
-    ligneCommandeClientToSaved.setArticle(articleOptional.get());
+    ligneCommandeClientToSaved.setProduct(productOptional.get());
     ligneCommandeClientRepository.save(ligneCommandeClientToSaved);
 
     return commandeClient;
   }
 
   @Override
-  public CommandeClientDto deleteArticle(Integer idCommande, Integer idLigneCommande) {
+  public CommandeClientDto deleteArticle(Long idCommande, Long idLigneCommande) throws InvalidOperationException, InvalidCmdClientException {
     checkIdCommande(idCommande);
     checkIdLigneCommande(idLigneCommande);
 
@@ -269,62 +270,61 @@ public class CommandeClientServiceImpl implements CommandeClientService {
     return commandeClient;
   }
 
-  private CommandeClientDto checkEtatCommande(Integer idCommande) {
+  private CommandeClientDto checkEtatCommande(Long idCommande) throws InvalidOperationException, InvalidCmdClientException {
     CommandeClientDto commandeClient = findById(idCommande);
     if (commandeClient.isCommandeLivree()) {
-      throw new InvalidOperationException("Impossible de modifier la commande lorsqu'elle est livree", ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+      throw new InvalidOperationException("Impossible de modifier la commande lorsqu'elle est livree");
     }
     return commandeClient;
   }
 
-  private Optional<LigneCommandeClient> findLigneCommandeClient(Integer idLigneCommande) {
+  private Optional<LigneCommandeClient> findLigneCommandeClient(Long idLigneCommande) throws InvalidCmdClientException {
     Optional<LigneCommandeClient> ligneCommandeClientOptional = ligneCommandeClientRepository.findById(idLigneCommande);
     if (ligneCommandeClientOptional.isEmpty()) {
-      throw new EntityNotFoundException(
-          "Aucune ligne commande client n'a ete trouve avec l'ID " + idLigneCommande, ErrorCodes.COMMANDE_CLIENT_NOT_FOUND);
+      throw new InvalidCmdClientException(
+          "Aucune ligne commande client n'a ete trouve avec l'ID ");
     }
     return ligneCommandeClientOptional;
   }
 
-  private void checkIdCommande(Integer idCommande) {
+  private void checkIdCommande(Long idCommande) throws InvalidOperationException {
     if (idCommande == null) {
       log.error("Commande client ID is NULL");
-      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec un ID null",
-          ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec un ID null");
     }
   }
 
-  private void checkIdLigneCommande(Integer idLigneCommande) {
+  private void checkIdLigneCommande(Long idLigneCommande) throws InvalidOperationException {
     if (idLigneCommande == null) {
       log.error("L'ID de la ligne commande is NULL");
-      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec une ligne de commande null",
-          ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec une ligne de commande null");
     }
   }
 
-  private void checkIdArticle(Integer idArticle, String msg) {
+  private void checkIdArticle(Long idArticle, String msg) throws InvalidOperationException {
     if (idArticle == null) {
       log.error("L'ID de " + msg + " is NULL");
-      throw new InvalidOperationException("Impossible de modifier l'etat de la commande avec un " + msg + " ID article null",
-          ErrorCodes.COMMANDE_CLIENT_NON_MODIFIABLE);
+      throw new InvalidOperationException("Impossible de modifier l'etat de la commande");
     }
   }
 
-  private void updateMvtStk(Integer idCommande) {
+  private void updateMvtStk(Long idCommande) {
     List<LigneCommandeClient> ligneCommandeClients = ligneCommandeClientRepository.findAllByCommandeClientId(idCommande);
     ligneCommandeClients.forEach(lig -> {
-      effectuerSortie(lig);
+      try {
+        effectuerSortie(lig);
+      } catch (InvalidMvtStkException e) {
+        throw new RuntimeException(e);
+      }
     });
   }
 
-  private void effectuerSortie(LigneCommandeClient lig) {
+  private void effectuerSortie(LigneCommandeClient lig) throws InvalidMvtStkException {
     MvtStkDto mvtStkDto = MvtStkDto.builder()
-        .article(ArticleDto.fromEntity(lig.getArticle()))
+        .product(productMapper.toDto(lig.getProduct()))
         .dateMvt(Instant.now())
         .typeMvt(TypeMvtStk.SORTIE)
-        .sourceMvt(SourceMvtStk.COMMANDE_CLIENT)
         .quantite(lig.getQuantite())
-        .idEntreprise(lig.getIdEntreprise())
         .build();
     mvtStkService.sortieStock(mvtStkDto);
   }

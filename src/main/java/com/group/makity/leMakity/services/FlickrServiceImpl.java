@@ -1,9 +1,8 @@
-package com.leMakiti.group.leMakiti.services.impl;
+package com.group.makity.leMakity.services;
 
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
 import com.flickr4java.flickr.uploader.UploadMetaData;
-import com.leMakiti.group.leMakiti.services.FlickrService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,13 +1,13 @@
 package com.group.makity.leMakity.mappers;
 
-import com.group.makity.leMakity.dtos.AppOrderDTO;
-import com.group.makity.leMakity.entities.AppOrder;
+import com.group.makity.leMakity.dtos.LigneCommandeClientDto;
+import com.group.makity.leMakity.entities.LigneCommandeClient;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = { AppUserMapper.class, ProductMapper.class})
-public interface CommandeClientMapper {
+@Mapper(componentModel = "spring", uses = { ProductMapper.class, LigneCommandeClientMapper.class})
+public interface LigneCommandeClientMapper {
 
-    AppOrder toEntity(AppOrderDTO appOrderDTO);
+    LigneCommandeClient toEntity(LigneCommandeClientDto ligneCommandeClientDto);
 
-    AppOrderDTO toDto(AppOrder AppOrder);
+    LigneCommandeClientDto toDto(LigneCommandeClient AppOrder);
 }

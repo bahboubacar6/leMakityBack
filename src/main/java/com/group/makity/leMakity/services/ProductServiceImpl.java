@@ -3,26 +3,21 @@ package com.group.makity.leMakity.services;
 import com.group.makity.leMakity.dtos.ProductDTO;
 import com.group.makity.leMakity.dtos.ProductHistoryDTO;
 import com.group.makity.leMakity.entities.AppCategory;
-import com.group.makity.leMakity.entities.ImageModel;
 import com.group.makity.leMakity.entities.Product;
 import com.group.makity.leMakity.exceptions.CategoryNotFoundException;
 import com.group.makity.leMakity.exceptions.ProductNotFoundException;
-import com.group.makity.leMakity.mappers.ImageModelMapper;
 import com.group.makity.leMakity.mappers.ProductMapImpl;
 import com.group.makity.leMakity.mappers.ProductMapper;
 import com.group.makity.leMakity.repositories.AppCategoryRepository;
 import com.group.makity.leMakity.repositories.AppUserRepository;
-import com.group.makity.leMakity.repositories.ImageModelRepository;
 import com.group.makity.leMakity.repositories.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,17 +30,13 @@ public class ProductServiceImpl implements ProductService {
     private AppCategoryRepository appCategoryRepository;
     private ProductMapImpl productMap;
     private AppUserRepository appUserRepository;
-    private ImageModelMapper imageModelMapper;
-    private ImageModelRepository imageModelRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, AppCategoryRepository appCategoryRepository, ProductMapImpl productMap, AppUserRepository appUserRepository, ImageModelMapper imageModelMapper, ImageModelRepository imageModelRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, AppCategoryRepository appCategoryRepository, ProductMapImpl productMap, AppUserRepository appUserRepository) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.appCategoryRepository = appCategoryRepository;
         this.productMap = productMap;
         this.appUserRepository = appUserRepository;
-        this.imageModelMapper = imageModelMapper;
-        this.imageModelRepository = imageModelRepository;
     }
 
     @Override
@@ -61,20 +52,6 @@ public class ProductServiceImpl implements ProductService {
         ProductDTO productDTO = productMapper.toDto(product);
         return productDTO;
     }
-
-   /* @Override
-    public ProductDTO saveProduct(ProductDTO productDTO) throws CategoryNotFoundException {
-
-        //AppCategory appCategory = appCategoryRepository.findById(productDTO.getCategory().getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
-        AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
-        Product product = productMapper.toEntity(productDTO);
-        product.setCategory(appCategory);
-        Product productSaved = productRepository.save(product);
-        productSaved.setCategory(appCategory);
-        ProductDTO productDTOSaved = productMapper.toDto(productSaved);
-
-        return productDTOSaved;
-    }*/
 
     @Override
     public ProductDTO saveProduct(ProductDTO productDTO) throws CategoryNotFoundException {
@@ -97,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
                     throw new RuntimeException("Le produit exist déjà");
                 }
         );
-        AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
+        /*AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
         Product product = productMapper.toEntity(productDTO);
         Set<ImageModel> imageModels = imageModelMapper.toEntityList(productDTO.getProductImages());
         List<ImageModel> imageModelslist = imageModelRepository.saveAll(imageModels);
@@ -106,7 +83,8 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(appCategory);
         Product saveProduct = productRepository.save(product);
         ProductDTO savedProductDTO = productMapper.toDto(saveProduct);
-        return savedProductDTO;
+        return savedProductDTO;*/
+        return null;
     }
 
     @Override

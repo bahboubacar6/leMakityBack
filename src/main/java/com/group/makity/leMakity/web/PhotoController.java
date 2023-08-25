@@ -1,51 +1,29 @@
 package com.group.makity.leMakity.web;
 
-import com.group.makity.leMakity.dtos.AppCategoryDTO;
+import com.flickr4java.flickr.FlickrException;
+import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.exceptions.CategoryNotFoundException;
-import com.group.makity.leMakity.services.AppCategoryService;
+import com.group.makity.leMakity.exceptions.InvalidOperationException;
+import com.group.makity.leMakity.exceptions.ProductNotFoundException;
+import com.group.makity.leMakity.services.strategy.StrategyPhotoContext;
+import com.group.makity.leMakity.web.api.PhotoApi;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
+
 
 @RestController
-@RequestMapping("/v1/category")
-@CrossOrigin(origins = "*")
-public class AppCategoryController {
+public class PhotoController implements PhotoApi {
 
-    private AppCategoryService appCategoryService;
+    private StrategyPhotoContext strategyPhotoContext;
 
-    public AppCategoryController(AppCategoryService appCategoryService) {
-        this.appCategoryService = appCategoryService;
+    public PhotoController(StrategyPhotoContext strategyPhotoContext) {
+        this.strategyPhotoContext = strategyPhotoContext;
     }
 
-    @GetMapping("/search")
-    public List<AppCategoryDTO> searchCategory(@RequestParam(name = "keyword", defaultValue = "") String keyword){
-        return appCategoryService.searchCategory("%" + keyword + "%");
-    }
-
-    @GetMapping("/all")
-    public List<AppCategoryDTO> getAllCategory(){
-        return appCategoryService.getAllCategory();
-    }
-
-    @GetMapping("/{id}")
-    public AppCategoryDTO getCategory(@PathVariable(name = "id") Long idCat) throws CategoryNotFoundException {
-         return appCategoryService.findById(idCat);
-    }
-
-    @PostMapping("/save")
-    public AppCategoryDTO saveCategory(@RequestBody AppCategoryDTO appCategoryDTO){
-        return appCategoryService.saveCat(appCategoryDTO);
-    }
-
-    @PutMapping("/update/{idCat}")
-    public AppCategoryDTO updateCategory(@PathVariable Long idCat, @RequestBody AppCategoryDTO appCategoryDTO) throws CategoryNotFoundException {
-        appCategoryDTO.setIdCategory(idCat);
-        return appCategoryService.updateCat(appCategoryDTO);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable Long id){
-        appCategoryService.deleteAppCat(id);
+    @Override
+    public Object savePhoto(String context, Long id, MultipartFile photo, String title) throws IOException, FlickrException, InvalidOperationException, CategoryNotFoundException, AppUserNotFoundException, ProductNotFoundException {
+        return strategyPhotoContext.savePhoto(context, id, photo.getInputStream(), title);
     }
 }

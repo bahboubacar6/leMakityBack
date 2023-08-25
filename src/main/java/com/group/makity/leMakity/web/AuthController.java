@@ -20,11 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping(value = "/v1/auth", produces = "application/json")
 @CrossOrigin(origins = "*")
 @Slf4j
 public class AuthController {
