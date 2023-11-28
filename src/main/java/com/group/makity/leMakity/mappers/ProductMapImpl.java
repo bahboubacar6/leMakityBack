@@ -22,15 +22,20 @@ public class ProductMapImpl {
         }
 
         Product product = new Product();
-        AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
 
-        product.setIdProduct( productDTO.getIdProduct() );
-        product.setProductName( productDTO.getProductName() );
-        product.setPrice( productDTO.getPrice() );
-        product.setDescription( productDTO.getDescription() );
+        if(productDTO.getIdProduct() == null) {
+            /*AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
+*/
+            product.setIdProduct( productDTO.getIdProduct() );
+            product.setProductName( productDTO.getProductName() );
+            product.setPrice( productDTO.getPrice() );
+            product.setDescription( productDTO.getDescription() );
+
+            product.setStockQuantity(productDTO.getStockQuantity());
+            /*product.setCategory(appCategory);*/
+
+        }
         product.setImage( productDTO.getImage() );
-        product.setStockQuantity( productDTO.getStockQuantity() );
-        product.setCategory(appCategory);
 
         return product;
     }
@@ -49,7 +54,7 @@ public class ProductMapImpl {
         productDTO.setDescription( Product.getDescription() );
         productDTO.setImage( Product.getImage() );
         productDTO.setStockQuantity( Product.getStockQuantity() );
-        productDTO.setIdCategory(Product.getCategory().getIdCategory());
+       /* productDTO.setIdCategory(Product.getCategory().getIdCategory());*/
 
         return productDTO;
     }

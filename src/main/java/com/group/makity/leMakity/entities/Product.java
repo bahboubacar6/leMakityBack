@@ -23,7 +23,7 @@ public class Product {
     private String image;
     private Double stockQuantity;
     @ManyToOne
-    @JoinColumn(name = "id_category", nullable = false)
-    @JsonBackReference
+    @JoinColumn(name = "id_category")
+    //@JsonBackReference
     private AppCategory category;
 }

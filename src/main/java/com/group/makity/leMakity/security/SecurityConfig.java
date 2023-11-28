@@ -49,7 +49,7 @@ public class SecurityConfig {
                  .and()
                  .authorizeRequests()
                  .antMatchers(
-                         "/v1/auth/**", "/v1/products/pageProduct",
+                         "/v1/auth/**", "/v1/products/pageProduct", "/v1/products/**",
                          "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/swagger-config", "/v3/api-docs"
                  ).permitAll()
                  .antMatchers(HttpMethod.GET, "/v1/users/all").permitAll()

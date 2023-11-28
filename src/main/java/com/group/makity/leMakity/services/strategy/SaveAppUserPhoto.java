@@ -28,6 +28,11 @@ public class SaveAppUserPhoto implements Strategy<AppUserDTO> {
         this.accountService = accountService;
     }
 
+    /*@Override
+    public String urlPhoto(InputStream photo) throws FlickrException, InvalidOperationException {
+        return null;
+    }*/
+
     @Override
     public AppUserDTO savePhoto(Long id, InputStream photo, String titre) throws AppUserNotFoundException, FlickrException, InvalidOperationException {
         AppUserDTO utilisateur = accountService.findById(id);
