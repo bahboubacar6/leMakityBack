@@ -11,6 +11,8 @@ import com.group.makity.leMakity.mappers.ProductMapper;
 import com.group.makity.leMakity.repositories.AppCategoryRepository;
 import com.group.makity.leMakity.repositories.AppUserRepository;
 import com.group.makity.leMakity.repositories.ProductRepository;
+import com.group.makity.leMakity.validator.ProductValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private static final String PRODUCT_NOT_FOUND = "Le produit n'existe pas";
@@ -54,43 +57,83 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO saveProduct(ProductDTO productDTO) throws CategoryNotFoundException {
+    public ProductDTO saveProduct(ProductDTO productDTO) throws CategoryNotFoundException, ProductNotFoundException {
 
-        //AppCategory appCategory = appCategoryRepository.findById(productDTO.getCategory().getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
-        AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
-        Product product = productMap.toEntity(productDTO);
-        product.setCategory(appCategory);
+        List<String> errors = ProductValidator.validate(productDTO);
+        if (!errors.isEmpty()) {
+            log.error("Article is not valid {}", productDTO);
+            throw new ProductNotFoundException("Le produit n'est pas valide");
+        }
+
+        return ProductDTO.fromEntity(
+                productRepository.save(
+                        ProductDTO.toEntity(productDTO)
+                )
+        );
+        /*Product product = productMap.toEntity(productDTO);
+        // product.setCategory(appCategory);
         Product productSaved = productRepository.save(product);
-        productSaved.setCategory(appCategory);
+        //  productSaved.setCategory(appCategory);
         ProductDTO productDTOSaved = productMap.toDto(productSaved);
 
-        return productDTOSaved;
+         return productDTOSaved;*/
     }
 
     @Override
-    public ProductDTO saveProductDB(ProductDTO productDTO) throws IOException, CategoryNotFoundException {
-        productRepository.findByProductName(productDTO.getProductName()).ifPresent(
-                (present)->{
-                    throw new RuntimeException("Le produit exist déjà");
-                }
-        );
-        /*AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
-        Product product = productMapper.toEntity(productDTO);
-        Set<ImageModel> imageModels = imageModelMapper.toEntityList(productDTO.getProductImages());
-        List<ImageModel> imageModelslist = imageModelRepository.saveAll(imageModels);
-        Set<ImageModel> imageModelSet = new HashSet<>(imageModelslist);
-        product.setProductImages(imageModelSet);
-        product.setCategory(appCategory);
-        Product saveProduct = productRepository.save(product);
-        ProductDTO savedProductDTO = productMapper.toDto(saveProduct);
-        return savedProductDTO;*/
+    public ProductDTO saveProductDB(ProductDTO productDTO) throws IOException, CategoryNotFoundException, ProductNotFoundException {
         return null;
     }
+
+   /* @Override
+    public ProductDTO saveProduct(ProductDTO productDTO) throws CategoryNotFoundException {
+
+        //AppCategory appCategory = appCategoryRepository.findById(productDTO.getCategory().getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
+        // AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
+        Product product = productMap.toEntity(productDTO);
+        // product.setCategory(appCategory);
+        Product productSaved = productRepository.save(product);
+        //  productSaved.setCategory(appCategory);
+        ProductDTO productDTOSaved = productMap.toDto(productSaved);
+
+        return productDTOSaved;
+    }*/
+
+    @Override
+    public ProductDTO saveProductD(Product product) throws IOException, CategoryNotFoundException, ProductNotFoundException {
+
+       /* List<String> errors = ProductValidator.validate(productDTO);
+        if (!errors.isEmpty()) {
+            log.error("Article is not valid {}", productDTO);
+            throw new ProductNotFoundException("Le produit n'est pas valide");
+        }*/
+
+       // Product product = productMap.toEntity(productDTO);
+        Product productSaved = productRepository.save(product);
+        ProductDTO productDTOSaved = productMap.toDto(productSaved);
+        return productDTOSaved;
+
+    }
+
+  /*  @Override
+    public ProductDTO saveProductDB(ProductDTO productDTO) throws IOException, CategoryNotFoundException, ProductNotFoundException {
+
+        List<String> errors = ProductValidator.validate(productDTO);
+        if (!errors.isEmpty()) {
+            log.error("Article is not valid {}", productDTO);
+            throw new ProductNotFoundException("Le produit n'est pas valide");
+        }
+
+        Product product = productMap.toEntity(productDTO);
+        Product productSaved = productRepository.save(product);
+        ProductDTO productDTOSaved = productMap.toDto(productSaved);
+        return productDTOSaved;
+
+    }*/
 
     @Override
     public ProductDTO updateProduct(ProductDTO productDTO) throws ProductNotFoundException, CategoryNotFoundException {
 
-        AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
+        //AppCategory appCategory = appCategoryRepository.findById(productDTO.getIdCategory()).orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
         Product product = productRepository.findById(productDTO.getIdProduct()).orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND));
         if(product == null){
             throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
@@ -101,9 +144,9 @@ public class ProductServiceImpl implements ProductService {
         if (!Objects.equals(product.getPrice(),productDTO.getPrice())){
             product.setPrice(productDTO.getPrice());
         }
-        if (!Objects.equals(product.getCategory().getIdCategory(),productDTO.getIdCategory())){
+       /* if (!Objects.equals(product.getCategory().getIdCategory(),productDTO.getIdCategory())){
             product.setCategory(appCategory);
-        }
+        }*/
         if (!Objects.equals(product.getDescription(), productDTO.getDescription())){
             product.setDescription(productDTO.getDescription());
         }

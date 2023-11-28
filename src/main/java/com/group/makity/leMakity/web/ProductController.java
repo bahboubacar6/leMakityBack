@@ -1,12 +1,19 @@
 package com.group.makity.leMakity.web;
 
+import com.flickr4java.flickr.FlickrException;
 import com.group.makity.leMakity.dtos.ProductDTO;
 import com.group.makity.leMakity.dtos.ProductHistoryDTO;
+import com.group.makity.leMakity.exceptions.AppUserNotFoundException;
 import com.group.makity.leMakity.exceptions.CategoryNotFoundException;
+import com.group.makity.leMakity.exceptions.InvalidOperationException;
 import com.group.makity.leMakity.exceptions.ProductNotFoundException;
 import com.group.makity.leMakity.services.ProductService;
+import com.group.makity.leMakity.services.strategy.StrategyPhotoContext;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,8 +23,11 @@ public class ProductController {
 
     private ProductService productService;
 
-    public ProductController(ProductService productService) {
+    private StrategyPhotoContext strategyPhotoContext;
+
+    public ProductController(ProductService productService, StrategyPhotoContext strategyPhotoContext) {
         this.productService = productService;
+        this.strategyPhotoContext = strategyPhotoContext;
     }
 
     @GetMapping("/all")
@@ -38,7 +48,7 @@ public class ProductController {
     }
 
     @PostMapping("/save")
-    public ProductDTO saveProduct(@RequestBody ProductDTO productDTO) throws CategoryNotFoundException {
+    public ProductDTO saveProduct(@RequestBody ProductDTO productDTO) throws CategoryNotFoundException, ProductNotFoundException {
         return productService.saveProduct(productDTO);
     }
 
@@ -52,4 +62,16 @@ public class ProductController {
     public void deleteProduct(@PathVariable Long idProd){
          productService.deleteProduct(idProd);
     }
+
+    /*@PostMapping("/{idProd}/photos/{title}")
+    public Object savePhoto( @PathVariable("idProd") Long id,@RequestPart("file") MultipartFile photo, @PathVariable(
+            "title") String title) throws IOException, FlickrException, InvalidOperationException, CategoryNotFoundException, AppUserNotFoundException, ProductNotFoundException {
+        return strategyPhotoContext.savePhoto("product", id, photo.getInputStream(), title);
+    }*/
+
+    /*@PostMapping(path="/{id}/photos/{title}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public Object savePhoto(@PathVariable("id") Long id, @PathVariable("title") String title,
+    @RequestPart MultipartFile file) throws IOException, FlickrException, InvalidOperationException, CategoryNotFoundException, AppUserNotFoundException, ProductNotFoundException {
+        return strategyPhotoContext.savePhoto("product",id, file.getInputStream(),title);
+    }*/
 }

@@ -7,17 +7,22 @@ import com.group.makity.leMakity.exceptions.InvalidOperationException;
 import com.group.makity.leMakity.exceptions.ProductNotFoundException;
 import com.group.makity.leMakity.services.strategy.StrategyPhotoContext;
 import com.group.makity.leMakity.web.api.PhotoApi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import static com.group.makity.leMakity.utils.Constants.APP_ROOT;
+
 
 @RestController
+@CrossOrigin(origins = "*")
 public class PhotoController implements PhotoApi {
 
     private StrategyPhotoContext strategyPhotoContext;
 
+    @Autowired
     public PhotoController(StrategyPhotoContext strategyPhotoContext) {
         this.strategyPhotoContext = strategyPhotoContext;
     }

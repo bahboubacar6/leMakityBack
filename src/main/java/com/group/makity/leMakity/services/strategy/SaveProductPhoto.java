@@ -38,6 +38,6 @@ public class SaveProductPhoto implements Strategy<ProductDTO> {
             throw new InvalidOperationException("Erreur lors de l'enregistrement de l'image du produit");
         }
         product.setImage(urlPhoto);
-        return productService.saveProductDB(product);
+        return productService.saveProduct(product);
     }
 }
